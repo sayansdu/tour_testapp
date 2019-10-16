@@ -1,20 +1,22 @@
 package com.sayan.testapp.json;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.sayan.testapp.model.Tour;
-
-import java.io.IOException;
+import spark.ResponseTransformer;
 
 public class JsonUtil {
 
-    private static ObjectMapper om = new ObjectMapper();
+    private static Gson GSON = new Gson();
 
-    public static String toJson(Object object) throws JsonProcessingException {
-        return om.writeValueAsString(object);
+    public static String toJson(Object object) {
+        return GSON.toJson(object);
     }
 
-    public static Tour fromJson(String value) throws IOException {
-        return om.readValue(value, Tour.class);
+    public static ResponseTransformer json() {
+        return JsonUtil::toJson;
+    }
+
+    public static Tour fromJson(String value) {
+        return GSON.fromJson(value, Tour.class);
     }
 }

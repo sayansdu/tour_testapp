@@ -14,24 +14,65 @@ public class TourService {
         repository = new TourRepository();
     }
 
-    public Tour findById(long id) throws SQLException {
-        return repository.findById(id);
+    public Tour findById(String id) {
+        try {
+            Tour tour = repository.findById(convertId(id));
+            if (tour == null) {
+                throw new RuntimeException("tour not found by id: " + id);
+            }
+            return tour;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getLocalizedMessage());
+        }
+
     }
 
-    public Tour create(Tour tour) throws SQLException {
-        return repository.create(tour);
+    public Tour create(Tour tour) {
+        try {
+            return repository.create(tour);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getLocalizedMessage());
+        }
     }
 
-    public Tour update(Tour tour) throws SQLException {
-        return repository.update(tour);
+    public Tour update(String id, Tour tour)  {
+        try {
+            findById(id);
+            return repository.update(tour);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getLocalizedMessage());
+        }
     }
 
-
-    public void delete(long id) throws SQLException {
-        repository.delete(id);
+    public boolean delete(String id) {
+        try {
+            findById(id);
+            repository.delete(convertId(id));
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getLocalizedMessage());
+        }
     }
 
-    public List<Tour> findAll() throws SQLException {
-        return repository.findAll();
+    public List<Tour> findAll() {
+        try {
+            return repository.findAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getLocalizedMessage());
+        }
+    }
+
+    private long convertId(String id) {
+        try {
+            return Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getLocalizedMessage());
+        }
     }
 }

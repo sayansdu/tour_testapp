@@ -4,7 +4,6 @@ import spark.utils.IOUtils;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
@@ -15,7 +14,7 @@ import static org.junit.Assert.fail;
 
 public class RestClientUtils {
 
-    static List<Integer> SUCCESS_STATUSES = Arrays.asList(HTTP_OK, HTTP_CREATED);
+    private static List<Integer> SUCCESS_STATUSES = Arrays.asList(HTTP_OK, HTTP_CREATED);
 
     public static class Response {
         private String body;

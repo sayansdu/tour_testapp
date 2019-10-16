@@ -6,12 +6,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import spark.Spark;
 
-import java.io.IOException;
-
 import static com.sayan.testapp.data.TestData.TEST_JSON;
 import static com.sayan.testapp.json.JsonUtil.fromJson;
 import static com.sayan.testapp.json.JsonUtil.toJson;
-import static java.net.HttpURLConnection.*;
+import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
+import static java.net.HttpURLConnection.HTTP_OK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -36,10 +35,10 @@ public class TourAppTest {
     }
 
     @Test
-    public void checkTourApp_successCase() throws IOException {
+    public void checkTourApp_successCase() {
         RestClientUtils.Response response = RestClientUtils.request("POST", "/tour", TEST_JSON);
 
-        assertEquals(HTTP_CREATED, response.getStatus());
+        assertEquals(HTTP_OK, response.getStatus());
 
         Tour tour = fromJson(response.getBody());
         assertEquals("TestCity", tour.getName());
@@ -50,7 +49,6 @@ public class TourAppTest {
         response = RestClientUtils.request("PUT", "/tour/" + tour.getId(), toJson(tour));
 
         assertEquals(HTTP_OK, response.getStatus());
-//        assertEquals("tour with id " + tour.getId() + " is updated!", response.getBody());
 
         String name = tour.getName();
         response = RestClientUtils.request("GET", "/tour/" + tour.getId(), null);
@@ -69,6 +67,13 @@ public class TourAppTest {
     public void findTourById_notFound() {
         RestClientUtils.Response response = RestClientUtils.request("GET", "/tour/0", null);
 
-        assertEquals(HTTP_NOT_FOUND, response.getStatus());
+        assertEquals(HTTP_INTERNAL_ERROR, response.getStatus());
+    }
+
+    @Test
+    public void findTourById_idNotNumber() {
+        RestClientUtils.Response response = RestClientUtils.request("GET", "/tour/test", null);
+
+        assertEquals(HTTP_INTERNAL_ERROR, response.getStatus());
     }
 }
